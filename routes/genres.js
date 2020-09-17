@@ -10,12 +10,12 @@ function validateGenres(genre){
 
 const genreList = []
 
-router.get('/genres', (req, res) => {
+router.get('/', (req, res) => {
     res.json({genreList})
 })
 
-router.get('/genres/:id', (req, res)=> {
-    const result = genreList.find(c => c.id == req.params.id )
+router.get('/:id', (req, res)=> {
+    const result = genreList.find(c => c.id === parseInt(req.params.id) )
     console.log(genreList);
     console.log(result);
     if(!result) return res.status(404).json({msg: "genre not found"})
@@ -23,7 +23,7 @@ router.get('/genres/:id', (req, res)=> {
     res.json({result})
 })
 
-router.post('/genres', (req, res) => {
+router.post('/', (req, res) => {
    try {
     
     const result = validateGenres(req.body)
@@ -39,9 +39,9 @@ router.post('/genres', (req, res) => {
    } 
 })
 
-router.delete('/genres/:id', (req,res)=>{
+router.delete('/:id', (req,res)=>{
     try {
-        const result = genreList.find(genre => genre.id == req.params.id)
+        const result = genreList.find(c => c.id === parseInt(req.params.id))
 
         if(!result) return res.status(404).json({msg: 'genre does not exists'})
 
