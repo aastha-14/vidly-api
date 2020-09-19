@@ -4,24 +4,33 @@ const Joi = require("joi");
 const Genre = require("../models/genres");
 
 function validateGenres(genre) {
-  const genres = Joi.object({ genre: Joi.string().required() });
+  const genres = Joi.object({ genre: Joi.string().min(5).max(50).required() });
   return genres.validate(genre);
 }
 
 router.get("/", async (req, res) => {
-  const result = await Genre.find().sort("name");
+  try {
+    const result = await Genre.find().sort("name");
 
-  if (!result) return res.status(404).json({ msg: "Genres not yet created." });
+    if (!result)
+      return res.status(404).json({ msg: "Genres not yet created." });
 
-  res.json({ result });
+    res.json({ result });
+  } catch (error) {
+    res.status(400).json({ msg: `${e.message}` });
+  }
 });
 
 router.get("/:id", async (req, res) => {
-  console.log(req.params.id);
-  const result = await Genre.findById(req.params.id);
+  try {
+    const result = await Genre.findById(req.params.id);
 
-  if (!result) return res.status(404).json({ msg: "Genre not found" });
-  res.json({ result });
+    if (!result) return res.status(404).json({ msg: "Genre not found" });
+
+    res.json({ result });
+  } catch (error) {
+    res.status(400).json({ msg: `${e.message}` });
+  }
 });
 
 router.post("/", async (req, res) => {
@@ -36,8 +45,7 @@ router.post("/", async (req, res) => {
 
     res.json({ genre });
   } catch (error) {
-    console.error(error.message);
-    res.status(400).json({ msg: "Server error" });
+    res.status(400).json({ msg: `${e.message}` });
   }
 });
 
@@ -48,7 +56,7 @@ router.put("/:id", async (req, res) => {
     if (result.error)
       return res.status(400).json(result.error.details[0].message);
 
-    const genre = await Genre.findOneAndUpdate(
+    const genre = await Genre.findByIdAndUpdate(
       req.params.id,
       {
         genre: result.value.genre,
@@ -59,8 +67,7 @@ router.put("/:id", async (req, res) => {
 
     res.json({ genre });
   } catch (error) {
-    console.error(error.message);
-    res.status(400).json({ msg: "Server error" });
+    res.status(400).json({ msg: `${e.message}` });
   }
 });
 
@@ -70,8 +77,7 @@ router.delete("/:id", async (req, res) => {
     if (!genre) return res.status(404).json({ msg: "genre does not exists" });
     res.json({ msg: "Genre deleted." });
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ msg: "Server error" });
+    res.status(400).json({ msg: `${e.message}` });
   }
 });
 

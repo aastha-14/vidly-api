@@ -23,6 +23,7 @@ if (app.get("env") === "development") {
 }
 
 app.use("/api/genres", require("./routes/genres"));
+app.use("/api/customer", require("./routes/customer"));
 
 const PORT = 5000;
 
