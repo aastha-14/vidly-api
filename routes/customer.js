@@ -1,17 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const Joi = require("joi");
-const Customer = require("../models/customer");
+const { Customer, validate } = require("../models/customer");
 
-function validateCustomer(customer) {
-  const { name, phone, isGold } = customer;
-  const customers = Joi.object({
-    name: Joi.string().min(5).max(50).required(),
-    phone: Joi.string().max(10).required(),
-    isGold: Joi.boolean(),
-  });
-  return customers.validate({ name, phone, isGold });
-}
 router.get("/", async (req, res) => {
   try {
     const customers = await Customer.find();
@@ -33,7 +23,7 @@ router.get("/:id", async (req, res) => {
 });
 router.post("/", async (req, res) => {
   try {
-    const result = validateCustomer(req.body);
+    const result = validate(req.body);
 
     if (result.error)
       return res.status(400).json(result.error.details[0].message);
@@ -60,7 +50,7 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   try {
-    const result = validateCustomer(req.body);
+    const result = validate(req.body);
 
     if (result.error)
       return res.status(400).json(result.error.details[0].message);

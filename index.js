@@ -24,6 +24,8 @@ if (app.get("env") === "development") {
 
 app.use("/api/genres", require("./routes/genres"));
 app.use("/api/customer", require("./routes/customer"));
+app.use("/api/movies", require("./routes/movies"));
+app.use("/api/rental", require("./routes/rental"));
 
 const PORT = 5000;
 
