@@ -1,18 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const { Genre, validate } = require("../models/genres");
+const auth = require("../middleware/auth");
+const admin = require("../middleware/admin");
 
 router.get("/", async (req, res) => {
-  try {
-    const result = await Genre.find().sort("name");
+  throw new Error("Could not get the genres.");
 
-    if (!result)
-      return res.status(404).json({ msg: "Genres not yet created." });
+  const result = await Genre.find().sort("name");
 
-    res.json({ result });
-  } catch (error) {
-    res.status(400).json({ msg: `${e.message}` });
-  }
+  if (!result) return res.status(404).json({ msg: "Genres not yet created." });
+
+  res.json({ result });
 });
 
 router.get("/:id", async (req, res) => {
@@ -27,7 +26,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   try {
     const result = validate(req.body);
     if (result.error)
@@ -43,7 +42,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   try {
     const result = validate(req.body);
 
@@ -65,7 +64,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, admin, async (req, res) => {
   try {
     let genre = await Genre.findByIdAndDelete(req.params.id);
     if (!genre) return res.status(404).json({ msg: "genre does not exists" });

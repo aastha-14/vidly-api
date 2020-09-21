@@ -5,16 +5,21 @@ const Fawn = require("fawn");
 const { Rental, validate } = require("../models/rental");
 const { Customer } = require("../models/customer");
 const { Movie } = require("../models/movies");
-
+const auth = require("../middleware/auth");
 const { Genre } = require("../models/genres");
+
 Fawn.init(mongoose);
 
 router.get("/", async (req, res) => {
-  const rentals = await Rental.find().sort("-dateOut");
-  res.json({ rentals });
+  try {
+    const rentals = await Rental.find().sort("-dateOut");
+    res.json({ rentals });
+  } catch (e) {
+    res.status(500).json({ msg: `${e.message}` });
+  }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   try {
     const result = validate(req.body);
     if (result.error)

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Customer, validate } = require("../models/customer");
+const auth = require("../middleware/auth");
 
 router.get("/", async (req, res) => {
   try {
@@ -21,7 +22,7 @@ router.get("/:id", async (req, res) => {
     res.status(400).json({ msg: `${e.message}` });
   }
 });
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   try {
     const result = validate(req.body);
 
@@ -48,7 +49,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   try {
     const result = validate(req.body);
 
@@ -73,7 +74,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   try {
     let customer = await Customer.findByIdAndDelete(req.params.id);
     if (!customer)
